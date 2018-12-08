@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+<!--  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="~{layout.html}"-->
+<head>
+</head>
+<body>
+	<div class="wrapper">
+		<section id="content" layout:fragment="content">
+			<div class="top-namefild">
+				<div class="name-heading" th:if="${#strings.equals(user.type,'Insertion')}">New
+					User Creation Request</div>
+				<div class="name-heading" th:if="${#strings.equals(user.type,'Updation')}">Edit
+					User Request</div>
+			</div>
+
+
+			<div class="row" th:if="${user.type == 'Insertion'}">
+				<div class="col-lg-12 col-sm-12">
+					<div class="white-box white-second">
+						<form role="form" id="submiteditUserInfo"
+							action="/AdminModule/editInformation"
+							th:action="@{/editInformation}" method="Post">
+							<input type="hidden" name="failedAttempts" id="failedAttempts" />
+							<!-- <input type="hidden" name="isActive" id="isActive" /> --> <input
+								type="hidden" name="approvalFlag" id="approvalFlag" />
+								
+								<input type="hidden" name="rejectRemark"/>
+								
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="col-lg-4">
+									<label>Locked/Unlocked</label>
+									<div class="toggle-switch" id="lockedContainer"
+										onclick="onContainerClick(this)">
+										<div class="switch" id="switch"></div>
+										<div class="label left">Unlock</div>
+										<div class="label right">Lock</div>
+									</div>
+								</div>
+								<!-- <div class="col-lg-4">
+									<label>Deleted/Recover</label>
+									<div class="toggle-switch" id="deleteContainer"
+										onclick="onContainerClick(this)">
+										<div class="switch" id="switch"></div>
+										<div class="label left">Recover</div>
+										<div class="label right">Delete</div>
+									</div>
+								</div>
+								<div class="col-lg-4 losbdr-R">
+									<label>Account Status</label>
+									<div class="toggle-switch" id="container"
+										onclick="onContainerClick(this)">
+										<div class="switch" id="switch"></div>
+										<div class="label left">Activate</div>
+										<div class="label right">Deactivate</div>
+									</div>
+								</div> -->
+
+							</div>
+
+
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Official
+										Email Id</label>
+									<div class="col-sm-7">
+										<input type="text" required="required"
+											placeholder="Enter email" name="emailId" id="editemailId"
+											onblur="validateEmail(this)"
+											style="text-transform: uppercase" />
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Name *</label>
+									<div class="col-sm-7">
+										<input type="text" name="userName" required="required"
+											id="edituserName" placeholder="Enter UserName"
+											onblur="isSpclChar(this)" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								
+								<div class="form-group col-lg-6 col-md-6">
+									<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+										<label for="inputEmail3" class="col-sm-5">Employee Code
+											*</label>
+										<div class="col-sm-7">
+											<input type="text" required="required" id="editemployeeCode" style="text-transform:uppercase"
+												readonly="readonly" placeholder="Enter Employee Code"
+												name="employeeCode" onblur="isSpclChar(this)"/>
+										</div>
+									</div>
+									<div sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+						              <label for="inputEmail3" class="col-sm-5">User Id *</label>
+						              <div class="col-sm-7">
+						                <input type="text" required="required" id="editemployeeCode" style="text-transform:uppercase"
+												readonly="readonly" placeholder="Enter User Id"
+												name="employeeCode" onblur="isSpclChar(this)"/>
+						              </div>
+					            	</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6" sec:authorize="hasAuthority('SUPER_ADMIN')">
+									<label for="inputEmail3" class="col-sm-5">Mobile No *</label>
+									<div class="col-sm-7">
+										<input required="required" type="tel" name="contactDetails"
+											id="editmobileNo" maxlength="10"
+											placeholder="Enter Mobile No"
+											onkeypress="return onlyNumbers(event)"
+											onblur="validateMobile(this)" />
+									</div>
+								</div>
+								<div sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+						        	<div class="form-group col-lg-6 col-md-6">
+						              <label for="inputEmail3" class="col-sm-5">Employee Code</label>
+						              <div class="col-sm-7">
+						                <input type="text" required="required" id="hdfcUserId"
+												placeholder="Enter Hdfc User Id" name="hdfcUserId" onblur="isSpclChar(this)" style="text-transform:uppercase"/>
+						              </div>
+						            </div>
+						        </div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Password *</label>
+									<div class="col-sm-7">
+										<input type="text" name="password" id="editpassword"
+											placeholder="Enter Password" required="required" />
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Designation</label>
+									<div class="col-sm-7">
+										<input type="text" name="designation" id="editdesignation"
+											placeholder="Enter Designation" onblur="isSpclChar(this)" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-6 col-md-6" style="display:none;">
+									<label for="inputEmail3" class="col-sm-5">Reporting
+										Manager</label>
+									<div class="col-sm-7">
+										<input type="text" name="reportingManager"
+											id="editreportingManager"
+											placeholder="Enter Reporting Manager"
+											onblur="isSpclChar(this)" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Reporting
+										Manager Ecode</label>
+									<div class="col-sm-7">
+										<input type="text" name="reporting_manager_ecode"
+											id="editreportingManagerEcode"
+											placeholder="Enter Reporting Manager Ecode"
+											onblur="isSpclChar(this)" />
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Role</label>
+									<div class="col-sm-7">
+										<select name="role" id="editrole">
+											<option value="">Select Role</option>
+											<option value="1">WORKER</option>
+											<option value="2">MANAGER</option>
+											<option value="3">TPP</option>
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<!-- <div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Department</label>
+									<div class="col-sm-7">
+										<input type="text" id="editdepartment" name="department"
+											placeholder="Enter Department" onblur="isSpclChar(this)" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Department
+										Detail</label>
+									<div class="col-sm-7">
+										<input type="text" onblur="isSpclChar(this)"
+											name="department_name" id="editdepartment_name"
+											placeholder="Enter Department Details" />
+									</div>
+								</div>
+							</div> -->
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6" id="editbranchCodeDiv">
+									<label for="inputEmail3" class="col-sm-5">Department Name</label>
+									<div class="col-sm-7">
+										<select  name=departmentId
+											id="departmentTag"
+											data-placeholder="--Search or Type Department Name--">
+											<option value="">--Search or Type Department Name--</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6" id="editbranchNameDiv">
+									<label for="inputEmail3" class="col-sm-5">Branch Name</label>
+									<div class="col-sm-7">
+										<select name="branchId" id="branchlist"
+											data-placeholder="--Search or Type Branch Name--">
+											<option value="">--Search or Type Branch Name--</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<!-- <div class="row">
+
+								<div class="form-group col-lg-6 col-md-6" id="editbranchCodeDiv">
+									<label for="inputEmail3" class="col-sm-5">Branch Code</label>
+									<div class="col-sm-7">
+										<select name="branchCode" id="branchCodeEdit"
+											data-placeholder="--Search or Type Branch Code--"
+											onchange="changeBranchName(this,'branchName')">
+											<option value="">--Search or Type Branch Code--</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6" id="editbranchNameDiv">
+									<label for="inputEmail3" class="col-sm-5">Branch Name</label>
+									<div class="col-sm-7">
+										<select name="branchName" id="branchNameEdit"
+											data-placeholder="--Search or Type Branch Name--"
+											onchange="changeBranchCode(this,'branchCode')">
+											<option value="">--Search or Type Branch Name--</option>
+										</select>
+									</div>
+								</div>
+							</div> -->
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Account Status</label>
+									<div class="col-sm-7">
+										<select  name="subState"
+											id="container">
+											<option value="0">Deactive</option>
+											<option value="1">Active</option>
+											<option value="2" sec:authorize="hasAuthority('SUPER_ADMIN')">Locked</option>
+											<option value="3">Dormant</option>
+											<option value="4">Deleted</option>
+										</select>
+									</div>
+								</div>
+								<!-- <div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Account Deleted</label>
+									<div class="col-sm-7">
+										<select name="isDelete" id="isDelete">
+											<option value="true">True</option>
+											<option value="false">False</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Account Dormant</label>
+									<div class="col-sm-7">
+										<select name="isDormant" id="isDormant">
+											<option value="true">True</option>
+											<option value="false">False</option>
+										</select>
+									</div>
+								</div> -->
+							</div>
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">City</label>
+									<div class="col-sm-7">
+										<input type="text" onblur="isSpclChar(this)" name="location"
+											id="editlocation" placeholder="Enter Location" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Hub</label>
+									<div class="col-sm-7">
+										<input type="text" onblur="isSpclChar(this)" name="hub"
+											id="editHub" placeholder="Enter Hub" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">State</label>
+									<div class="col-sm-7">
+										<input type="text" onblur="isSpclChar(this)" name="state"
+											id="editstate" placeholder="Enter State" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Region</label>
+									<div class="col-sm-7">
+										<input type="text" onblur="isSpclChar(this)" name="region"
+											id="editregion" placeholder="Enter Region" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Alternate
+										Mobile No</label>
+									<div class="col-sm-7">
+										<input type="tel" name="supervisorContactDetails"
+											class="form-control" id="editsupervisorDet" maxlength="10"
+											placeholder="Enter Alternate Contact Details"
+											onkeypress="return onlyNumbers(event)"
+											onblur="validateMobile(this)" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Alternate
+										Email Id</label>
+									<div class="col-sm-7">
+										<input type="email" name="alternateEmail"
+											id="editalternateEmail" placeholder="Enter Alternate Email"
+											onblur="validateEmail(this)" />
+									</div>
+								</div>
+							</div>
+
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Elearning</label>
+									<div class=" col-sm-7 radio-sec">
+										<span class="act-dct radio-btn"> <input value="1"
+											id="editeLearningOn" name="isLearningAvlbl" type="radio" />
+											<label for="editeLearningOn" onclick=""><span>On</span></label>
+										</span> <span class="act-dct radio-btn date"> <input value="0"
+											id="editeLearningOff" name="isLearningAvlbl" type="radio" />
+											<label for="editeLearningOff" onclick=""><span>Off</span></label>
+										</span>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+					              <label for="inputEmail3" class="col-sm-5">User Id</label>
+					              <div class="col-sm-7">
+					                <input type="text" required="required" id="hdfcUserId"
+											placeholder="Enter Hdfc User Id" name="hdfcUserId" onblur="isSpclChar(this)" style="text-transform:uppercase"/>
+					              </div>
+					            </div>
+							</div>
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')" style="display:none">
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Department
+										Broad Category</label>
+									<div class="col-sm-7">
+										<select name="dept_broad_category"
+											id="editdept_broad_category">
+											<option value="">Select Dept Broad Category</option>
+											<option value="Auto Loans">Auto Loans</option>
+											<option value="Two Wheelers">Two Wheelers</option>
+											<option value="CV">CV</option>
+											<option value="Tractors">Tractors</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="form-group col-lg-6 col-md-6"
+								sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('SUPER_ADMIN')">
+								<input type="button" value="Submit" name="" id="submitEditBtn"
+									onclick="editUserInformation('editUserInfo')"> <a
+									th:href="@{uamDashBoard}" href="/AdminModule/uamDashBoard"><input
+									type="button" value="Cancel" name="" id="cancelEditBtn" /></a>
+							</div>
+							<div class="form-group col-lg-6 col-md-6"
+								sec:authorize="hasAuthority('UAM_CHECKER')">
+								<input type="button" value="Approve" name="" id="approveBtn"
+									onclick="approveRejectUserInformation('submiteditUserInfo',1,'viewUAMApprovalRequests')">
+								<input type="button" value="Reject" name="" id="rejectBtn"
+									onclick="approveRejectUserInformation('submiteditUserInfo',2,'viewUAMApprovalRequests')">
+								<a th:href="@{/uamApprovalRequests}" href="/AdminModule/uamApprovalRequests"><input
+									type="button" value="Cancel" name="" id="cancelEditBtn" /></a>
+							</div>
+
+
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<div class="row" th:if="${user.type == 'Updation'}">
+				<div class="col-lg-12 col-sm-12">
+					<div class="white-box white-second">
+						<form class="form-horizontal" id="submiteditUserInfo"
+							action="/AdminModule/editInformation"
+							th:action="@{/editInformation}" method="Post">
+							<input type="hidden" name="failedAttempts" id="failedAttempts" />
+							<!-- <input type="hidden" name="isActive" id="isActive" /> --> <input
+								type="hidden" name="approvalFlag" id="approvalFlag" />
+								
+								<input type="hidden" name="rejectRemark"/>
+
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3"></label>
+
+									<div class="col-sm-4">
+										<span class="desktop-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<span class="desktop-view">Requested</span>
+									</div>
+
+								</div>
+							</div>
+						<!-- 	<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Account
+										Status</label>
+									<div class="col-sm-4">
+										<div class="toggle-switch" id="oldContainer">
+											<div class="switch" id="switch"></div>
+											<div class="label left">Active</div>
+											<div class="label right">Deactive</div>
+										</div>
+
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<div class="toggle-switch" id="container"
+											onclick="onContainerClick(this)">
+											<div class="switch" id="switch"></div>
+											<div class="label left">Active</div>
+											<div class="label right">Deactive</div>
+										</div>
+
+										<span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div> -->
+							 <div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Account
+										Locked</label>
+									<div class="col-sm-4">
+										<div class="toggle-switch" id="oldlockedContainer">
+											<div class="switch" id="switch"></div>
+											<div class="label left">UnLocked</div>
+											<div class="label right">Locked</div>
+										</div>
+
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<div class="toggle-switch" id="lockedContainer"
+											onclick="onContainerClick(this)">
+											<div class="switch" id="switch"></div>
+											<div class="label left">UnLocked</div>
+											<div class="label right">Locked</div>
+										</div>
+
+										<span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div> 
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Email Id</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editemailIdOld">
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" required="required"
+											placeholder="Enter email" name="emailId" id="editemailId"
+											onblur="validateEmail(this)"
+											style="text-transform: uppercase" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">UserName *</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="edituserNameOld" />
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" name="userName" required="required"
+											id="edituserName" placeholder="Enter UserName"
+											onblur="isSpclChar(this)" /> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3" sec:authorize="hasAuthority('SUPER_ADMIN')">Employee Code
+										*</label>
+										<label for="inputEmail3" class="col-sm-3" sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">User Id
+										*</label>
+									<div class="col-sm-4">
+										<input type="text" readonly="readonly" disabled="disabled"
+											id="editemployeeCodeOld" /> <span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" required="required" id="editemployeeCode"
+											style="text-transform: uppercase" readonly="readonly"
+											placeholder="Enter Employee Code" name="employeeCode"
+											onblur="isSpclChar(this)" /> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3" sec:authorize="hasAuthority('SUPER_ADMIN')">User Id
+										</label>
+										<label for="inputEmail3" class="col-sm-3" sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">Employee Code
+										</label>
+									<div class="col-sm-4">
+										<input type="text" readonly="readonly"disabled="disabled"
+											id="editHdfcUserIdOld" /> <span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" required="required" id="hdfcUserId"
+											name="hdfcUserId"
+											onblur="isSpclChar(this)" /> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Mobile No *</label>
+									<div class="col-sm-4">
+										<input type="number" disabled="disabled" id="editmobileNoOld">
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input required="required" type="tel" name="contactDetails"
+											id="editmobileNo" maxlength="10"
+											placeholder="Enter Mobile No"
+											onkeypress="return onlyNumbers(event)"
+											onblur="validateMobile(this)" /> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Password *</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editpasswordOld">
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" name="password" id="editpassword"
+											placeholder="Enter Password" required="required" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Designation</label>
+									<div class="col-sm-4">
+										<input type="text" id="editdesignationOld" disabled="disabled"/> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" name="designation" id="editdesignation"
+											placeholder="Enter Designation" onblur="isSpclChar(this)" />
+										<span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')" style="display:none;">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Reporting
+										Manager</label>
+									<div class="col-sm-4">
+										<input type="text" id="editreportingManagerOld" disabled="disabled"/>
+										<span class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" name="reportingManager"
+											id="editreportingManager"
+											placeholder="Enter Reporting Manager"
+											onblur="isSpclChar(this)" /> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Reporting
+										Manager Ecode</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editreportingManagerEcodeOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" 
+											name="reporting_manager_ecode" id="editreportingManagerEcode"
+											placeholder="Enter Reporting Manager Ecode" onblur="isSpclChar(this)"/> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Department</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editdepartmentOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+											<select  name=departmentId
+											id="departmentTag"
+											data-placeholder="--Search or Type Department Name--">
+											<option value="">--Search or Type Department Name--</option>
+										</select>
+											<span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+							<!-- <div class="row" style="display:none;">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Department Details</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editdepartment_nameOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" onblur="isSpclChar(this)" name="department_name"
+											id="editdepartment_name"
+											placeholder="Enter Department Details" /><span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div> -->
+
+							
+
+							<!-- <div class="row" style="display:none;">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Branch Code</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="branchCodeEditOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<select  name="branchCode"
+											id="branchCodeEdit"
+											data-placeholder="--Search or Type Branch Code--"
+											onchange="changeBranchName(this,'branchName')">
+											<option value="">--Search or Type Branch Code--</option>
+										</select><span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div> -->
+
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Branch Name</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="branchNameEditOld"> <span
+											class="mobile-view">Previous</span> 
+									</div>
+
+									<div class="col-sm-4">
+										<select name="branchId" id="branchlist"
+											data-placeholder="--Search or Type Branch Name--">
+											<option value="">--Search or Type Branch Name--</option>
+										</select><span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">City</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editlocationOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" onblur="isSpclChar(this)" name="location"
+											id="editlocation" placeholder="Enter Location" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Hub</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editHubOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" onblur="isSpclChar(this)" name="hub" id="editHub"
+											placeholder="Enter Hub" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">State</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editstateOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" onblur="isSpclChar(this)" name="state"
+											id="editstate" placeholder="Enter State" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Region</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editregionOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="text" onblur="isSpclChar(this)" name="region"
+											id="editregion" placeholder="Enter Region" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Alternate
+										Contact Details</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editsupervisorDetOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="tel" name="supervisorContactDetails"
+											class="form-control" id="editsupervisorDet" maxlength="10"
+											placeholder="Enter Alternate Contact Details"
+											onkeypress="return onlyNumbers(event)" onblur="validateMobile(this)" /> <span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Alternate
+										Email Id</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editalternateEmailOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<input type="email" name="alternateEmail"
+											id="editalternateEmail" placeholder="Enter Alternate Email" onblur="validateEmail(this)" /><span
+											class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Role</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editroleOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<select name="role" id="editrole">
+											<option value="1">Worker</option>
+											<option value="2">Manager</option>
+											<option value="3">TPP</option>
+										</select> <span class="mobile-view">Requested</span>
+									</div>
+
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Account Status</label>
+									<div class="col-sm-4">
+										<select id="editisActiveOld">
+											
+											<option value="0">Deactive</option>
+											<option value="1">Active</option>
+											<option value="2" sec:authorize="hasAuthority('SUPER_ADMIN')">Locked</option>
+											<option value="3">Dormant</option>
+											<option value="4">Deleted</option>
+										</select> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<select name="subState" id="editisActive">
+											
+											<option value="0">Deactive</option>
+											<option value="1">Active</option>
+											<option value="2" sec:authorize="hasAuthority('SUPER_ADMIN')">Locked</option>
+											<option value="3">Dormant</option>
+											<option value="4">Deleted</option>
+										</select> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+							
+							<div sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+					            <div class="row">
+					              <div class="form-group col-lg-12 col-md-12">
+					              <label for="inputEmail3" class="col-sm-3">Role</label>
+					              <div class="col-sm-4">
+					              		<select  id="editroleOld">
+											<option value="1" selected="selected">WORKER</option>
+											<option value="2">MANAGER</option>
+											<option value="3">TPP</option>
+										</select><span
+											class="mobile-view">Previous</span>
+					              </div>
+					              <div class="col-sm-4">
+					              		<select name="role" id="editrole">
+											<option value="1" selected="selected">WORKER</option>
+											<option value="2">MANAGER</option>
+											<option value="3">TPP</option>
+										</select><span class="mobile-view">Requested</span>
+					              </div>
+					            </div>        
+					            </div>
+					        </div> 
+							
+							<!-- <div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Account Deleted</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editisDeleteOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<select name="isDelete" id="editisDelete">
+											<option value="true">True</option>
+											<option value="false">False</option>
+										</select> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-lg-12 col-md-12">
+									<label for="inputEmail3" class="col-sm-3">Account Dormant</label>
+									<div class="col-sm-4">
+										<input type="text" disabled="disabled" id="editisDormantOld"> <span
+											class="mobile-view">Previous</span>
+									</div>
+
+									<div class="col-sm-4">
+										<select name="isDormant" id="editisDormant">
+											<option value="true">True</option>
+											<option value="false">False</option>
+										</select> <span class="mobile-view">Requested</span>
+									</div>
+								</div>
+							</div> -->
+							
+							<div class="form-group col-lg-6 col-md-6"
+								sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('SUPER_ADMIN')">
+								<input type="button" value="Submit" name="" id="submitEditBtn"
+									onclick="editUserInformation('editUserInfo')"> <a
+									th:href="@{uamDashBoard}" href="/AdminModule/uamDashBoard"><input
+									type="button" value="Cancel" name="" id="cancelEditBtn" /></a>
+							</div>
+							<div class="form-group col-lg-6 col-md-6"
+								sec:authorize="hasAuthority('UAM_CHECKER')">
+								<input type="button" value="Approve" name="" id="approveBtn"
+									onclick="approveRejectUserInformation('submiteditUserInfo',1,'viewUAMApprovalRequests')">
+								<input type="button" value="Reject" name="" id="rejectBtn"
+									onclick="approveRejectUserInformation('submiteditUserInfo',2,'viewUAMApprovalRequests')">
+								<a th:href="@{/uamApprovalRequests}" href="/AdminModule/uamApprovalRequests"><input
+									type="button" value="Cancel" name="" id="cancelEditBtn" /></a>
+							</div>
+
+
+						</form>
+					</div>
+				</div>
+			</div>
+
+
+
+
+
+					<input type="hidden" th:attr="value=${userJson}" id="userDetail" />
+					
+					
+					<div class="modal fade admin-popup" id="reject" role="dialog">
+						<input type="hidden" value="" id="hiddenFormId"/>
+						  <div class="modal-dialog">
+						    <!-- Modal content-->
+						    <div class="modal-content">
+						      <button type="button" class="close" data-dismiss="modal">&times;</button>
+						      <div class="modal-body mrg-T20">
+						        <div class="data-match text-center">
+						        <img src="../static/images/warning.svg" th:src="@{/images/warning.svg}" width="80">
+						          <p id="modelText">Are you sure you want to reject this records.</p>
+						          <textarea rows="3" placeholder="Remarks" id="rejectRemark"></textarea>
+						          <a href="#" class="button" onclick="javascript:submitRejectUserInfo2(2)">YES</a>
+						          <a href="#" class="cancel-btn" data-dismiss="modal">NO</a>
+						        </div>
+						      </div>
+						    </div>
+						  </div>
+						  </div>
+					
+					
+		</section>
+	</div>
+
+</body>
+<th:block layout:fragment="script">
+
+	<script>
+$(function(){
+	showTargetDiv('UAMApprovalReq');
+	//fetchBranchMaster('branchCodeEdit','branchNameEdit');
+	//fetchUAMCityList('editlocation','editstate');
+	fetchDepartmentList();
+	getBranchList();
+	$(document).ready(function() {
+		var response = $('#userDetail').val();
+		var data= $.parseJSON(response);
+		//console.log("user information=="+data);
+		$('#editemailId').val(data.newUserid);
+		$('#edituserName').val(data.newUsername);
+		$('#editemployeeCode').val(data.newECode);
+		$('#editmobileNo').val(data.newContactDetails);
+		$('#editpassword').val(data.newPassword);
+		$('#editdesignation').val(data.newDesignation);
+		$('#departmentTag').val(data.newDepartment);
+		$('#editreportingManagerEcode').val(data.newReportingManagerECode);
+		$('#editrole').val(data.newRole);
+		$('#branchlist').val(data.newBranchCode);
+		if(data.newIsLearningAvlbl==true){
+			$('input[name="isLearningAvlbl"][value="1"]').prop('checked', true);
+		}
+		else{
+			$('input[name="isLearningAvlbl"][value="0"]').prop('checked', true);
+		}
+		$('#failedAttempts').val(data.newFailedAttempts);
+		$('#approvalFlag').val(data.newApprovalFlag);
+		//$('#isActive').val(data.newIsActive);
+		$('select[name="subState"] option[value="'+data.newSubState+'"]').prop('selected','selected');
+		$('#editisActiveOld option[value="'+data.oldSubState+'"]').prop('selected','selected').prop('disabled','disabled');
+		$('#editemailIdOld').val(data.oldUserid);
+		$('#edituserNameOld').val(data.oldUsername);
+		$('#editemployeeCodeOld').val(data.oldECode);
+		$('#editHdfcUserIdOld').val(data.oldHdfcUserId);
+		$('#editmobileNoOld').val(data.oldContactDetails);
+		$('#editpasswordOld').val(data.oldPassword);
+		$('#editreportingManagerOld').val(data.oldReportingManager);
+		$('#editdesignationOld').val(data.oldDesignation);
+		$('#editdepartmentOld').val(data.oldDepartmentName);
+	//	$('#editdepartment_nameOld').val(data.oldDepartmentName);
+		$('#editlocationOld').val(data.oldLocation);
+		$('#editHubOld').val(data.oldHub);
+		$('#editstateOld').val(data.oldState);
+		$('#editregionOld').val(data.oldRegion);
+		$('#editreportingManagerEcodeOld').val(data.oldReportingManagerECode);
+		$('#editsupervisorDetOld').val(data.oldSupContactDetails);
+		$('#editalternateEmailOld').val(data.oldAltEmail);
+		$('#editroleOld').val(data.oldRole);
+		//$('#branchCodeEditOld').val(data.oldBranchCode);
+		$('#branchNameEditOld').val(data.oldBranchName);
+		$('#hdfcUserId').val(data.newHdfcUserId);
+		if($('#approvalFlag').val() != 1 &&  $('#approvalFlag').val() !=4){
+			$('#approveBtn').hide();
+			$('#rejectBtn').hide();
+		}
+		
+	});
+	/* var previousElem;
+	$('input[name=isLearningAvlbl]').click(function(e) { 
+	    var previous = $(this).attr('previous');
+	    if(previous && previousElem === this){
+	        $(this).prop('checked', false);
+	    }
+	    previousElem = this;
+	    $(this).attr('previous', $(this).prop('checked'));
+	}); */
+});
+</script>
+</th:block>
+</html>

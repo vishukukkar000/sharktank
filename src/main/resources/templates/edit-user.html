@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+<!--  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="~{layout.html}"-->
+<head>
+</head>
+<body>
+	<div class="wrapper">
+		<section id="content" layout:fragment="content">
+		<div id="wait" class="loader-overlay" style="display: none;">
+			<img src="../static/images/clock-loading.gif"
+				th:src="@{images/clock-loading.gif}"/><br>
+		</div>
+			<div class="top-namefild">
+				<div class="name-heading">Edit User Information</div>
+			</div>
+
+			<div class="row" id="editUserBasicDiv" style="display:none;">
+				<div class="col-lg-12 col-sm-12">
+					<div class="white-box white-second">
+						<form class="form-horizontal">
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6" sec:authorize="hasAuthority('SUPER_ADMIN')">
+									<!-- <label for="inputEmail3" class="col-sm-5">Employee
+										Code/Email Id/Mobile No *</label> -->
+									<label for="inputEmail3" class="col-sm-5" >Employee Code *</label>
+									<div class="col-sm-7">
+										<!-- <input type="text" required="required" name="empCode"
+											id="empCode" placeholder="Enter Employee Code/Email/Mobile" th:value="${editEcode}" style="text-transform:uppercase"/> -->
+										<input type="text"  name="empCode"
+											id="empCode" placeholder="Enter Employee Code" th:value="${editEcode}" style="text-transform:uppercase"/>
+										
+										<input type="button" value="Fetch Details" name=""
+											class="button" id="fetchDetailsDBtn" onclick="fetchUserInformation()">
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6" sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+									<!-- <label for="inputEmail3" class="col-sm-5">Employee
+										Code/Email Id/Mobile No *</label> -->
+									<label for="inputEmail3" class="col-sm-5">User Id *</label>
+									<div class="col-sm-7">
+										<!-- <input type="text" required="required" name="empCode"
+											id="empCode" placeholder="Enter Employee Code/Email/Mobile" th:value="${editEcode}" style="text-transform:uppercase"/> -->
+										<input type="text"  name="empCode"
+											id="empCode" placeholder="Enter User Id" th:value="${editEcode}" style="text-transform:uppercase"/>
+										
+										<input type="button" value="Fetch Details" name=""
+											class="button" id="fetchDetailsDBtn" onclick="fetchUserInformation()">
+									</div>
+								</div>
+
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div id="editUserInfo" class="row" style="display: none;">
+				<div class="col-lg-12 col-sm-12">
+					<div class="white-box white-second">
+						<form role="form" id="submiteditUserInfo"
+							action="/AdminModule/editInformation"
+							th:action="@{editInformation}" method="Post">
+							<input type="hidden" name="failedAttempts"  id="failedAttempts"/> <!-- <input
+								type="hidden" name="isActive" id="isActive"/>  -->
+							<input type="hidden" name="approvalFlag" id="approvalFlag" />
+							<input type="hidden" name="state" id="hiddenState" value="">
+							<input type="hidden" name="hiddenPassword" id="hiddenPassword" value="">
+							<input type="hidden" name="role" id="hiddenRole" value="" />
+							<input type="hidden" name="departmentId" id="hiddenDepartmentId" value="" />
+							<input type="hidden" name="branchId" id="hiddenBranchId" value="" />
+							<input type="hidden" name="location" id="hiddenLocation" value="" />
+							
+							<div class="row" sec:authorize="hasAuthority('SUPER_ADMIN')">
+								<!-- <div class="col-lg-4">
+									<label>Locked/Unlocked</label>
+									<div class="toggle-switch" id="lockedContainer"
+										onclick="onContainerClick(this)">
+										<div class="switch" id="switch"></div>
+										<div class="label left">Unlock</div>
+										<div class="label right">Lock</div>
+									</div>
+								</div> -->
+								<!-- <div class="col-lg-4">
+									<label>Deleted/Recover</label>
+									<div class="toggle-switch" id="deleteContainer"
+										onclick="onContainerClick(this)">
+										<div class="switch" id="switch"></div>
+										<div class="label left">Recover</div>
+										<div class="label right">Delete</div>
+									</div>
+								</div>
+								<div class="col-lg-4 losbdr-R">
+									<label>Account Status</label>
+									<div class="toggle-switch" id="container"
+										onclick="onContainerClick(this)">
+										<div class="switch" id="switch"></div>
+										<div class="label left">Activate</div>
+										<div class="label right">Deactivate</div>
+									</div>
+								</div> -->
+
+							</div>
+
+
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Official Email Id</label>
+									<div class="col-sm-7">
+										<input type="text" 
+											placeholder="Enter email" name="emailId" id="editemailId" onfocusout="validateEmail(this)" style="text-transform:uppercase"/>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Name *</label>
+									<div class="col-sm-7">
+										<input type="text" name="userName" 
+											id="edituserName" placeholder="Enter UserName" onfocusout="isSpclChar(this)"/>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+										<label for="inputEmail3" class="col-sm-5">Employee Code
+											*</label>
+										<div class="col-sm-7">
+											<input type="text" required="required" id="editemployeeCode" style="text-transform:uppercase;background-color: #f1f1f1;"
+												readonly="readonly" placeholder="Enter Employee Code"
+												name="employeeCode" onfocusout="isSpclChar(this)"/>
+										</div>
+									</div>
+									<div sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+						              <label for="inputEmail3" class="col-sm-5">User Id *</label>
+						              <div class="col-sm-7">
+						                <input type="text"  id="editemployeeCode" style="text-transform:uppercase;background-color: #f1f1f1;"
+												readonly="readonly" placeholder="Enter User Id"
+												name="employeeCode" onfocusout="isSpclChar(this)"/>
+						              </div>
+					            	</div>
+								</div>
+								<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+									<div class="form-group col-lg-6 col-md-6">
+										<label for="inputEmail3" class="col-sm-5">Mobile No *</label>
+										<div class="col-sm-7">
+											<input  type="tel" name="contactDetails"
+												id="editmobileNo" maxlength="10"
+												placeholder="Enter Mobile No"
+												onkeypress="return onlyNumbers(event)" onfocusout="validateMobile(this)"/>
+										</div>
+									</div>
+								</div>
+								<div sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+						        	<div class="form-group col-lg-6 col-md-6">
+						              <label for="inputEmail3" class="col-sm-5">Employee Code</label>
+						              <div class="col-sm-7">
+						                <input type="text"  id="hdfcUserId"
+												placeholder="Enter Employee code" name="hdfcUserId" onfocusout="isSpclChar(this)" style="text-transform:uppercase"/>
+						              </div>
+						            </div>
+						        </div>
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Password *</label>
+									<div class="col-sm-7">
+										<input type="password" name="password" id="editpassword" onfocusout="isLastFivePassword(this)"
+											placeholder="Enter Password"  />
+											<a href="#" class="pass-showhide" onclick="showHidePassword('editpassword')">Show</a>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Designation
+										</label>
+									<div class="col-sm-7">
+										<input type="text" name="designation" id="editdesignation"
+											placeholder="Enter Designation" onfocusout="isSpclChar(this)"/>
+									</div>
+								</div>
+							</div>
+
+							<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6" style="display:none;">
+									<label for="inputEmail3" class="col-sm-5">Reporting
+										Manager</label>
+									<div class="col-sm-7">
+										<input type="text"  name="reportingManager"
+											id="editreportingManager"
+											placeholder="Enter Reporting Manager"/>
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Reporting
+										Manager Ecode</label>
+									<div class="col-sm-7">
+										<input type="text" 
+											name="reporting_manager_ecode" id="editreportingManagerEcode"
+											placeholder="Enter Reporting Manager Ecode" style="text-transform:uppercase;"/>
+											<!--onblur="isSpclChar(this)" -->
+									</div>
+								</div>
+								
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Role</label>
+									<div class="col-sm-7">
+										<select name="role1" id="editrole" onchange="changeRoleName(this,'editrole')">
+											<option value="">Select Role</option>
+											<option value="1">WORKER</option>
+											<option value="2">MANAGER</option>
+											<option value="3">TPP</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							</div>
+
+							<!-- <div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Department</label>
+									<div class="col-sm-7">
+										<input type="text"  id="editdepartment"
+											name="department" placeholder="Enter Department" onblur="isSpclChar(this)"/>
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Department
+										Detail</label>
+									<div class="col-sm-7">
+										<input type="text" onblur="isSpclChar(this)" name="department_name"
+											id="editdepartment_name"
+											placeholder="Enter Department Details" />
+									</div>
+								</div>
+							</div> -->
+							
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6" id="editbranchCodeDiv">
+									<label for="inputEmail3" class="col-sm-5">Department Name *</label>
+									<div class="col-sm-7">
+										<select  name="departmentId1"  onchange="changeDepartmentName(this,'departmentTag')"
+											id="departmentTag"
+											data-placeholder="--Search or Type Branch Code--">
+											<option value="">--Search or Type Department Name--</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6" id="editbranchNameDiv">
+									<label for="inputEmail3" class="col-sm-5">Branch Name *</label>
+									<div class="col-sm-7">
+										<select name="branchId1"  id="branchlist" onchange="changeBranchName(this,'branchlist')"
+											data-placeholder="--Search or Type Branch Name--">
+											<option value="">--Search or Type Branch Name--</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">City</label>
+									<div class="col-sm-7">
+										<!-- <input type="text" onblur="isSpclChar(this)" name="location"
+											id="editlocation" placeholder="Enter Location" /> -->
+										<select id="editlocation" name="location1" onchange="changeStateName(this,'editstate')">
+											<option value="all">Select City</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Hub</label>
+									<div class="col-sm-7">
+										<input type="text" onfocusout="isSpclChar(this)" name="hub" id="editHub"
+											placeholder="Enter Hub" />
+									</div>
+								</div>
+							</div>
+							</div>
+
+							<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">State</label>
+									<div class="col-sm-7">
+										<!-- <input type="text" onblur="isSpclChar(this)" name="state"
+											id="editstate" placeholder="Enter State" /> -->
+										<select id="editstate" name="state1" disabled="true">
+											<option value="all">Select State</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Region</label>
+									<div class="col-sm-7">
+										<input type="text" onfocusout="isSpclChar(this)" name="region"
+											id="editregion" placeholder="Enter Region" />
+									</div>
+								</div>
+							</div>
+							</div>
+
+							<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Alternate
+										Mobile No</label>
+									<div class="col-sm-7">
+										<input type="tel" name="supervisorContactDetails"
+											id="editsupervisorDet" maxlength="10"
+											placeholder="Enter Alternate Mobile No"
+											onkeypress="return onlyNumbers(event)" onfocusout="validateMobile(this)" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Alternate
+										Email Id</label>
+									<div class="col-sm-7">
+										<input type="email" name="alternateEmail"
+											id="editalternateEmail" placeholder="Enter Alternate Email" onfocusout="validateEmail(this)" />
+									</div>
+								</div>
+							</div>
+							</div>
+
+							<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Apply Elearning</label>
+									<div class=" col-sm-7 radio-sec">
+										<span class="act-dct radio-btn"> <input value="1"
+											id="editeLearningOn" name="isLearningAvlbl" type="radio" />
+											<label for="editeLearningOn" onclick=""><span>Yes</span></label>
+										</span> <span class="act-dct radio-btn date"> <input value="0"
+											id="editeLearningOff" name="isLearningAvlbl" type="radio"/>
+											<label for="editeLearningOff" onclick=""><span>No</span></label>
+										</span>
+									</div>
+								</div>		
+								
+								<div class="form-group col-lg-6 col-md-6">
+					              <label for="inputEmail3" class="col-sm-5">User Id</label>
+					              <div class="col-sm-7">
+					                <input type="text"  id="hdfcUserId"
+											placeholder="Enter Hdfc User Id" name="hdfcUserId" onfocusout="isSpclChar(this)" style="text-transform:uppercase"/>
+					              </div>
+					            </div>						
+							</div>
+							</div>
+							
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Account Status</label>
+									<div class="col-sm-7">
+										<select  name=subState
+											id="container">
+											<option value="0">Deactive</option>
+											<option value="1">Active</option>
+											<option value="2" sec:authorize="hasAuthority('SUPER_ADMIN')">Locked</option>
+											<option value="3">Dormant</option>
+											<option value="4">Deleted</option>
+										</select>
+									</div>
+								</div>
+								<div sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('UAM_CHECKER')">
+									<div class="form-group col-lg-6 col-md-6">
+										<label for="inputEmail3" class="col-sm-5">Role</label>
+										<div class="col-sm-7">
+											<select name="role1" id="editrole" onchange="changeRoleName(this,'editrole')">
+												<option value="">Select Role</option>
+												<option value="1">WORKER</option>
+												<option value="2">MANAGER</option>
+												<option value="3">TPP</option>
+											</select>
+										</div>
+									</div> 
+								</div>
+							</div>
+							
+							<div sec:authorize="hasAuthority('SUPER_ADMIN')">
+							<div class="row" style="display:none">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Department
+										Broad Category</label>
+									<div class="col-sm-7">
+										<select name="dept_broad_category"
+											id="editdept_broad_category">
+											<option value="">Select Dept Broad Category</option>
+											<option value="Auto Loans">Auto Loans</option>
+											<option value="Two Wheelers">Two Wheelers</option>
+											<option value="CV">CV</option>
+											<option value="Tractors">Tractors</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							</div>
+							<div class="form-group col-lg-6 col-md-6" sec:authorize="hasAuthority('UAM_MAKER') or hasAuthority('SUPER_ADMIN') or hasAuthority('INSURANCE')  or hasAuthority('PDD')  or hasAuthority('DAILY_REPORT_CREATOR') or hasAuthority('NOTIFCATION') or hasAuthority('DAILY_REPORT_VIEWER') or hasAuthority('DEALER_ADMIN') or hasAuthority('DEALER')">
+								<input type="button" disabled style="color:#5ea6f5" value="Submit" name="" id="submitEditBtn"
+									onclick="editUserInformation('editUserInfo')">
+									<a th:href="@{/uamDashBoard}" href="/AdminModule/uamDashBoard"><input type="button" value="Cancel" name="" id="cancelEditBtn"/></a>
+							</div>
+							<div class="form-group col-lg-6 col-md-6" sec:authorize="hasAuthority('UAM_CHECKER')">
+								<input type="button" disabled value="Submit" name="" id="submitEditBtn"
+									onclick="editUserInformation('editUserInfo')" style="display:none;color:#5ea6f5">
+								<input type="button" value="Approve" name="" id="approveBtn"
+									onclick="approveRejectUserInformation('editUserInfo',1,'editUserInformationResponse')">
+									<input type="button" value="Reject" name="" id="rejectBtn"
+									onclick="approveRejectUserInformation('editUserInfo',2,'editUserInformationResponse')">
+									<a th:href="@{/uamDashBoard}" href="/AdminModule/uamDashBoard"><input type="button" value="Cancel" name="" id="cancelEditBtn"/></a>
+							</div>
+							
+
+						</form>
+					</div>
+				</div>
+			</div>
+
+<input type="hidden" th:value="${#authentication.getPrincipal().getUser().role}" id="authorityVal"/>
+
+
+
+
+
+
+		</section>
+	</div>
+
+</body>
+<th:block layout:fragment="script">
+
+	<script>
+$(function(){
+	showTargetDiv('editUserInfo');
+	fetchUAMCityList('editlocation','editstate');
+	/* var previousElem;
+	$('input[name=isLearningAvlbl]').click(function(e) { 
+	    var previous = $(this).attr('previous');
+	    if(previous && previousElem === this){
+	        $(this).prop('checked', false);
+	    }
+	    previousElem = this;
+	    $(this).attr('previous', $(this).prop('checked'));
+	}); */
+	$("body").keyup(function(e){ 
+		if(e.which == 32 || (e.which>=48 && e.which<=57) || (e.which>=65 && e.which<=90)) {
+			$('#submitEditBtn').removeAttr('disabled');
+			$('#submitEditBtn').css('color','#ffffff');
+	    }
+    });
+	
+	$("select").on('change', function() {
+		$('#submitEditBtn').removeAttr('disabled');
+		$('#submitEditBtn').css('color','#ffffff');
+	});
+	
+	$('input[name=isLearningAvlbl]').on('change', function() {
+		$('#submitEditBtn').removeAttr('disabled');
+		$('#submitEditBtn').css('color','#ffffff');
+	});
+	
+	
+	
+	$('#container').on('change', function (e) {
+	    var valueSelected = this.value;
+	    if(valueSelected==1){//active case
+	    	$('#editemailId').attr('readonly', false); 
+	    	$('#edituserName').attr('readonly', false); 
+	    	$('#editemployeeCode').attr('readonly', false); 
+	    	$('#editmobileNo').attr('readonly', false); 
+	    	$('#editpassword').attr('readonly', false); 
+	    	$('#editdesignation').attr('readonly', false); 
+	    	$('#editlocation').prop('disabled', false);
+	    	$('#editHub').attr('readonly', false); 
+	    	$('#editregion').attr('readonly', false); 
+	    	$('#editreportingManagerEcode').attr('readonly', false); 
+	    	$('#editsupervisorDet').attr('readonly', false); 
+	    	$('#editalternateEmail').attr('readonly', false); 
+	    	$('#editrole').prop('disabled', false);
+	    	$('#hdfcUserId').attr('readonly', false); 
+	    	$('#departmentTag').prop('disabled', false);
+	    	$('#branchlist').prop('disabled', false);
+	    	$('input[name=isLearningAvlbl]').attr('disabled', false);
+	    }else{
+	    	$('#editemailId').attr('readonly', true); 
+	    	$('#edituserName').attr('readonly', true); 
+	    	$('#editemployeeCode').attr('readonly', true); 
+	    	$('#editmobileNo').attr('readonly', true); 
+	    	$('#editpassword').attr('readonly', true); 
+	    	$('#editdesignation').attr('readonly', true); 
+	    	$('#editlocation').prop('disabled', 'disabled');
+	    	$('#editHub').attr('readonly', true); 
+	    	$('#editregion').attr('readonly', true); 
+	    	$('#editreportingManagerEcode').attr('readonly', true); 
+	    	$('#editsupervisorDet').attr('readonly', true); 
+	    	$('#editalternateEmail').attr('readonly', true); 
+	    	$('#editrole').prop('disabled', 'disabled');
+	    	$('#hdfcUserId').attr('readonly', true); 
+	    	$('#departmentTag').prop('disabled', 'disabled');
+	    	$('#branchlist').prop('disabled', 'disabled');
+	    	$('input[name=isLearningAvlbl]').attr('disabled', true);
+	    }
+	});
+	
+	
+});
+</script>
+</th:block>
+</html>

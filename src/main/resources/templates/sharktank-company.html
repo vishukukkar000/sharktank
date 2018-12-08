@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+<head>
+</head>
+<body>
+	<div class="wrapper">
+		<section id="content" layout:fragment="content">
+			<div class="top-namefild">
+				<div class="name-heading">Companies</div>
+			</div>
+
+
+			<div class="row" th:if="${not #lists.isEmpty(companyList)}">
+				<div class="col-lg-12">
+
+					<input type="hidden" th:value="${totalCount}" id="totalCount"
+						name="totalCount" />
+
+					<div class="white-box white-second">
+						<div class="row">
+							<form class="form-horizontal">
+								<label for="inputEmail3" class="col-sm-12">Filter</label>
+								<div class="radio-sec">
+									<span class="act-dct radio-btn investor"> <input
+										value="investor" id="rc6" name="rc2" type="radio"> <label
+										for="rc6" onclick=""><span>Investor</span></label>
+									</span> <span class="act-dct radio-btn amount"> <input
+										value="amount" id="rc10" name="rc2" type="radio"> <label
+										for="rc10" onclick=""><span>Investment Amount</span></label>
+									</span> <span class="act-dct radio-btn gender"> <input
+										value="gender" id="rc7" name="rc2" type="radio"> <label
+										for="rc7" onclick=""><span>Entrepreneur Gender</span></label>
+									</span> <span class="act-dct radio-btn season"> <input
+										value="season" id="rc8" name="rc2" type="radio"> <label
+										for="rc8" onclick=""><span>Season</span></label>
+									</span>
+
+
+								</div>
+							</form>
+						</div>
+						<div class="col-lg-12">
+							<div class="form-group col-lg-12 col-sm-12 bg-color investor-div">
+								<form class="form-horizontal" id="investorForm"
+									th:action="@{/filterCompany}" action="/SharkTank/filterCompany"
+									method="post">
+
+									<label for="inputEmail3" class="col-sm-3">Investor</label>
+									<div class="col-lg-6 col-sm-6">
+										<input type="text" id="investorHidden" name="investorHidden"
+											th:value="${investorSearch}" style="display: none;">
+										<select class="auto-select" id="investorName"
+											name="investorSearch">
+											<option value=''>--Please select Investor--</option>
+											<option th:each="investor: ${investors}"
+												th:value="${investor}" th:text="${investor}"></option>
+										</select>
+									</div>
+									<div class="col-lg-3 col-sm-3 topspace">
+										<input type="button" value="Filter" name=""
+											onclick="$('#investorForm').submit();" /> <span
+											class="reset-btn"><input type="button" value="Reset"
+											onclick="$('#investorName').siblings('.searchable-select').find('.searchable-select-item:first').click();clickOnFilter(this);"></span>
+
+									</div>
+
+								</form>
+							</div>
+						</div>
+
+						<div class="col-lg-12">
+							<div class="form-group col-lg-12 col-sm-12 bg-color amount-div">
+								<form class="form-horizontal" id="investmentAmtForm"
+									th:action="@{/filterCompany}" action="/SharkTank/filterCompany"
+									method="post">
+
+									<label for="inputEmail3" class="col-sm-3">Enter
+										Investment Amount</label>
+
+									<div class="col-lg-6 col-sm-6">
+
+										<span><input type="text" id="investmentAmtName"
+											name="investmentAmt" th:value="${investmentAmt}"></span>
+
+									</div>
+									<div class="col-lg-3 col-sm-3 topspace">
+										<input type="button" id="investmentAmtSearch" value="Filter"
+											name="" onclick="$('#investmentAmtForm').submit();" /> <span
+											class="reset-btn"><input type="button" value="Reset"
+											onclick="$('#investmentAmtName').val('');clickOnFilter(this);"></span>
+
+									</div>
+
+								</form>
+							</div>
+						</div>
+						<div class="col-lg-12">
+							<div class="form-group col-lg-12 col-sm-12 bg-color gender-div">
+								<form class="form-horizontal" id="genderForm"
+									th:action="@{/filterCompany}" action="/SharkTank/filterCompany"
+									method="post">
+
+									<label for="inputEmail3" class="col-sm-3">Entrepreneur
+										Gender</label>
+									<div class="col-lg-6 col-sm-6">
+
+										<input type="text" id="genderNameHidden"
+											name="genderSearchHidden" th:value="${genderSearch}"
+											style="display: none;"> <select class="auto-select"
+											id="genderName" name="genderSearch">
+											<option value=''>--Please select Gender--</option>
+											<option value='Male'>Male</option>
+											<option value='Female'>Female</option>
+										</select>
+									</div>
+									<div class="col-lg-3 col-sm-3 topspace">
+										<input type="button" value="Filter" name=""
+											onclick="$('#genderForm').submit();" /> <span
+											class="reset-btn"><input type="button" value="Reset"
+											onclick="$('#genderName').siblings('.searchable-select').find('.searchable-select-item:first').click();clickOnFilter(this);"></span>
+									</div>
+
+								</form>
+							</div>
+						</div>
+						<div class="col-lg-12">
+							<div class="form-group col-lg-12 col-sm-12 bg-color season-div">
+								<form class="form-horizontal" id="seasonForm"
+									th:action="@{/filterCompany}" action="/SharkTank/filterCompany"
+									method="post">
+
+									<label for="inputEmail3" class="col-sm-3">Season</label>
+									<div class="col-lg-6 col-sm-6">
+										<input type="text" id="seasonHidden" name="seasonSearchHidden"
+											th:value="${seasonSearch}" style="display: none;"> <select
+											class="auto-select" id="seasonName" name="seasonSearch">
+											<option value=''>--Please select Season--</option>
+											<option th:each="season: ${seasons}" th:value="${season}"
+												th:text="${season}"></option>
+										</select>
+									</div>
+									<div class="col-lg-3 col-sm-3 topspace">
+										<input type="button" value="Filter" name=""
+											onclick="$('#seasonForm').submit();" /> <span
+											class="reset-btn"><input type="button" value="Reset"
+											onclick="$('#seasonName').siblings('.searchable-select').find('.searchable-select-item:first').click();clickOnFilter(this);"></span>
+									</div>
+
+								</form>
+							</div>
+						</div>
+
+
+
+
+
+
+
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-lg-12 col-sm-12">
+					<div class="white-box white-second"
+						th:if="${#lists.isEmpty(companyList)}"
+						th:text="'No companies exist in the system.'">No companies exist
+						in the system.</div>
+					<div class="white-box white-second"
+						th:if="${not #lists.isEmpty(companyList)}">
+						<ul class="userlisting" id="myDiv">
+							<li th:each="request: ${companyList}">
+								<form th:attr="id='view_'+${request.id}"
+									th:action="@{/fetchCompanyDetail}"
+									action="/SharkTank/fetchCompanyDetail" method="POST">
+									<input type="hidden" th:value="${request.id}"
+										th:attr="id='viewEcode_'+${request.id}" name="company" />
+									<div class="col-lg-4 col-sm-3">
+										<div class="inner-userpic">
+											<img src="../static/images/default.png"
+												th:src="@{/images/default.png}" />
+										</div>
+										<div class="num-off-act">
+											<span th:text="${request.name}" class="approval-name">Company</span>
+											<span th:text="${request.industry}">Industry</span>
+										</div>
+
+									</div>
+									<div class="col-lg-3 col-sm-3">
+										<div class="num-off-act">
+											Entrepreneur Gender <span class="req-align"
+												th:text="${request.gender}">Male</span>
+										</div>
+									</div>
+									<div class="col-lg-3 col-sm-3">
+										<div class="num-off-act">
+											Valuation <span class="req-align"
+												th:text="${request.valuation}">valuation</span>
+										</div>
+									</div>
+									<div class="col-lg-2 col-sm-3 ipad-Tspace button-sec">
+										<div class="Approval approve-active">
+											<a href="javascript:void(0)"><i class="fa fa-check"
+												aria-hidden="true"></i> Active</a>
+										</div>
+										<div class="side-arrow">
+											&nbsp;<a onclick="javascript:submitViewCompany(this);"
+												th:attr="ecode=${request.id}"><img
+												src="images/right-arrow.png" width="12"></a>
+										</div>
+									</div>
+
+
+
+
+								</form>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+
+			<input type="hidden" th:value="${filter}" id="filter" name="filter" />
+			<input type="hidden" th:value="${statusSearch}" id="statusCode"
+				name="statusCode" />
+			<div class="col-md-12 center text-center"
+				th:if="${not #lists.isEmpty(companyList)}">
+				<span class="left" id="total_reg"></span>
+				<ul class="pagination pager" id="myPager"></ul>
+			</div>
+		</section>
+	</div>
+
+
+
+	<th:block layout:fragment="script">
+
+		<script>
+		function submitViewCompany(el){
+			var ecode= $(el).attr('ecode');
+			if(undefined != ecode){
+				$('#view_'+ecode).submit();
+			}
+		}
+		function clearStatus(el){
+			$('input[name="statusSearch"]').val('');
+			clickOnFilter(el);
+		}
+		function clickOnFilter(el){
+			$('.reset-btn input[type="button"]').attr("disabled", "disabled");
+			$(el).parent().siblings('input[type="button"][value="Filter"]').click();
+			$('.reset-btn input[type="button"]').removeAttr("disabled");
+		}
+			$(document).ready(function() {
+				
+
+
+					  $(".gender").change(function(){
+					   
+					   $(".investor-div").slideUp('slow');
+					   $(".season-div").slideUp('slow');
+					   $(".amount-div").slideUp('slow');
+					   $(".gender-div").slideDown('slow');
+					 });
+
+
+					  $(".investor").change(function(){
+					   
+						 
+						   $(".season-div").slideUp('slow');
+						   $(".amount-div").slideUp('slow');
+						   $(".gender-div").slideUp('slow');
+						   $(".investor-div").slideDown('slow');
+					 });
+
+					  $(".season").change(function(){
+					   
+						  
+						   $(".amount-div").slideUp('slow');
+						   $(".gender-div").slideUp('slow');
+						   $(".investor-div").slideUp('slow');
+						   $(".season-div").slideDown('slow');
+					 });
+
+					  $(".amount").change(function(){
+						   $(".gender-div").slideUp('slow');
+						   $(".investor-div").slideUp('slow');
+						   $(".season-div").slideUp('slow');
+						   $(".amount-div").slideDown('slow');
+					 });
+					  
+					 
+					 
+					  if($('#filter').val() != '' && $('#filter').val() != undefined){
+							$('input[name="rc2"][value="'+$('#filter').val()+'"]').attr('checked','checked');
+							$('.'+$('#filter').val()).trigger('change');
+						}
+					  else{
+						  $('input[name="rc2"][value="investor"]').attr('checked','checked').trigger('change');
+					  }
+					 
+					  /* if($('#eCodeSearchNameHidden').val() != undefined && $('#eCodeSearchNameHidden').val() != ''){
+						  $('#eCodeSearchName').val($('#eCodeSearchNameHidden').val());
+					  } */
+					  if($('#investorHidden').val() != undefined && $('#investorHidden').val() != ''){
+						  $('#investorName').val($('#investorHidden').val());
+					  }
+					  if($('#genderNameHidden').val() != undefined && $('#genderNameHidden').val() != ''){
+						  $('#genderName').val($('#genderNameHidden').val());
+					  }
+					  if($('#seasonHidden').val() != undefined && $('#seasonHidden').val() != ''){
+						  $('#seasonName').val($('#seasonHidden').val());
+					  }
+					  
+					  $('.auto-select').searchableSelect();
+					  
+				
+				$('#myPager').bootpag({
+					/* total: 10000, */
+					total: (parseInt(Math.ceil($('#totalCount').val()/10))),
+					maxVisible: 10
+				}).on("page", function(event, num){
+				   // $(".content").html("Page " + num); // or some ajax content loading...
+				   var data='';
+				   if($('input[name="rc2"]:checked').val()== 'investor'){
+					   data={"investorSearch":$('input[name="investorSearch"]:checked').val()};
+				   }
+				   else if($('input[name="rc2"]:checked').val()== 'gender'){
+					   data={"genderSearch":$('input[name="genderSearch"]:checked').val()};
+				   }
+				   else if($('input[name="rc2"]:checked').val()== 'amount'){
+					   data={"investmentAmt":$('#investmentAmtName').val()};
+				   }
+				   else if($('input[name="rc2"]:checked').val()== 'season'){
+					   data={"seasonSearch":$('input[name="seasonSearch"]:checked').val()};
+				   }
+				   $.ajax({
+					  url:"/SharkTank/fetchCompanyLimit",
+					  data:{
+						  "start":(num-1)*10,
+						  "max":10,
+						  "uamFilter":JSON.stringify(data)
+					  },
+					  type: 'POST',
+					  success:function(response){
+						  var html = '';
+						  $.map($.parseJSON(response),function(item){
+							  html+='<li><form action="/SharkTank/fetchCompanyDetail" method="POST" id="view_'+item.id+'"><input name="company" id="viewEcode_'+item.id+'" value="'+item.id+'" type=hidden><div class="col-lg-4 col-sm-3"><div class=inner-userpic><img src="images/default.png"></div><div class=num-off-act><span class=approval-name>'+item.name+' </span> <span>'+item.industry+'</span></div></div><div class="col-lg-3 col-sm-3"><div class=num-off-act>Entreprenuer Gender <span class=req-align>'+item.gender+'</span></div></div><div class="col-lg-3 col-sm-3"><div class=num-off-act>Valuation <span class=req-align>';
+							  if(item.valuation===undefined){
+								  html+='';
+							  }else{
+								  html+= item.valuation;
+							  }
+							  html+='</span></div></div><div class="col-lg-2 col-sm-3 button-sec ipad-Tspace">';
+							  html+=' <div class=activebtn><a href=javascript:void(0)><i aria-hidden=true class="fa fa-check"></i> Active</a></div>';
+							  
+							  html+=' <div class=side-arrow><a onclick=submitViewCompany(this) ecode="'+item.id+'"><img src="images/right-arrow.png" width=12></a></div></div></form></li>';
+							  
+						  });
+						  $('#myDiv').html(html);
+					  }
+				   });
+				    
+				    // ... after content load -> change total to 10
+				  //  $(this).bootpag({total: 10000, maxVisible: 10});
+				 
+				});
+			});
+		</script>
+	</th:block>
+</body>
+</html>

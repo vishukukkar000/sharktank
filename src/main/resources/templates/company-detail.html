@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout">
+<!--  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="~{layout.html}"-->
+<head>
+</head>
+<body>
+	<div class="wrapper">
+		<section id="content" layout:fragment="content">
+			<div class="top-namefild">
+				<div class="name-heading">Company Details</div>
+			</div>
+
+
+			<div class="row">
+				<div class="col-lg-12 col-sm-12">
+					<div class="white-box white-second">
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Season</label>
+									<div class="col-sm-7">
+										<input type="text" required="required" readonly="readonly"
+											th:value="${companyDto.season}" />
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Name</label>
+									<div class="col-sm-7">
+										<input type="text" name="userName" required="required" readonly="readonly"
+											id="edituserName" th:value="${companyDto.name}"/>
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								
+								<div class="form-group col-lg-6 col-md-6">
+										<label for="inputEmail3" class="col-sm-5">Series
+											</label>
+										<div class="col-sm-7">
+											<input type="text" required="required" 
+												readonly="readonly" th:value="${companyDto.series}"/>
+										</div>
+									
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Deal</label>
+									<div class="col-sm-7">
+										<input type="text" required="required" readonly="readonly" th:value="${companyDto.deal}" />
+									</div>
+								</div>
+								
+							</div>
+
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Industry</label>
+									<div class="col-sm-7">
+										<input type="text" readonly="readonly" th:value="${companyDto.industry}" />
+									</div>
+								</div>
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputPassword3" class="col-sm-5">Entrepreneur Gender</label>
+									<div class="col-sm-7">
+										<input type="text" readonly="readonly" th:value="${companyDto.gender}" />
+									</div>
+								</div>
+							</div>
+
+							<div class="row" >
+								<div class="form-group col-lg-6 col-md-6" >
+									<label for="inputEmail3" class="col-sm-5">Equity</label>
+									<div class="col-sm-7">
+										<input type="text" readonly="readonly" th:value="${companyDto.equity}" />
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Valuation</label>
+									<div class="col-sm-7">
+										<input type="text" readonly="readonly" th:value="${companyDto.valuation}" />
+									</div>
+								</div>
+								
+							</div>
+
+							
+							
+							
+							<div class="row">
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Notes</label>
+									<div class="col-sm-7">
+										<input type="text" th:value="${companyDto.notes}" />
+									</div>
+								</div>
+
+								
+							</div>
+
+							<div class="row" th:each="investor,iter: ${companyDto.investmentDto}">
+								<div class="form-group col-lg-6 col-md-6" >
+									<label for="inputEmail3" class="col-sm-5" th:utext="'Investor '+${iter.Count}">Investor</label>
+									<div class="col-sm-7">
+										<input type="text" readonly="readonly" th:value="${investor.investor}"/>
+									</div>
+								</div>
+
+								<div class="form-group col-lg-6 col-md-6">
+									<label for="inputEmail3" class="col-sm-5">Amount</label>
+									<div class="col-sm-7">
+										<input type="text" readonly="readonly" th:value="${investor.investment}" />
+									</div>
+								</div>
+							</div>
+
+							
+							<div class="form-group col-lg-6 col-md-6">
+								 <a	th:href="@{/fetchCompanyList}" href="/AdminModule/fetchCompanyList"><input
+									type="button" value="Cancel" name="" id="cancelEditBtn" /></a>
+							</div>
+							
+
+
+					</div>
+				</div>
+			</div>
+
+			
+					
+					
+		</section>
+	</div>
+
+</body>
+
+</html>
